@@ -54,7 +54,7 @@ jobs:
   release:
     name: Push binary & rpm to releases
     needs:
-      - build_exe
+      - build_tar
       - build_rpm
     runs-on: ubuntu-latest
     steps:
