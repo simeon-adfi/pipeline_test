@@ -42,3 +42,9 @@ jobs:
           cp hello.spec ~/rpmbuild/SPECS/
           rpmbuild -bb --define "_topdir $HOME/rpmbuild" ~/rpmbuild/SPECS/hello.spec
           cp ~/rpmbuild/RPMS/*/*.rpm .
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-1.0-1.rpm
+          path: "*.rpm"
