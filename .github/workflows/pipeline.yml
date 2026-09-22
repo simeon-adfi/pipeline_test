@@ -1,0 +1,23 @@
+name: Create RPM
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: make
+        run: make
+      - name: test binary
+        run: ./hello
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hello
+          path: hello
