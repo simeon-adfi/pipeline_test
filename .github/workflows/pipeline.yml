@@ -24,7 +24,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hello-tarball
-          path: hello-1.0-1.x86_64.tar.gz
+          path: "*.tar.gz"
   build_rpm:
     name: build rpm package
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hello-1.0-1.rpm
-          path: hello-1.0-1.rpm
+          path: "*.rpm"
 
   release:
     name: Push binary & rpm to releases
@@ -67,7 +67,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release delete latest --cleanup-tag -y || true
+          gh release delete latest --yes --repo "${{ github.repository }}" || true
+          gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/latest" || true
           gh release create latest release-files/*.tar.gz release-files/*.rpm \
+            --repo "${{ github.repository }}" \
             --title "Latest Build" \
-            --notes "Automated rolling release from latest commit"
+            --notes "Rolling release automatically updated on push to main (${{ github.sha }})."
