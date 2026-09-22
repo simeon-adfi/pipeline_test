@@ -7,7 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build_exe:
+    name: Create Executable
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,3 +22,23 @@ jobs:
         with:
           name: hello
           path: hello
+  build_rpm:
+    name: build rpm package
+    needs: build_exe
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install RPM build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+      - name: Compile C binary
+        run: make
+      - name: Run rpmbuild to produce rpm
+        run: |
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          cp hello ~/rpmbuild/SOURCES/
+          cp hello.spec ~/rpmbuild/SPECS/
+          rpmbuild -bb --define "_topdir $HOME/rpmbuild" ~/rpmbuild/SPECS/hello.spec
+          cp ~/rpmbuild/RPMS/*/*.rpm .
