@@ -67,6 +67,7 @@ jobs:
           merge-multiple: true
       - name: Push rpm & binary
         env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           tag_name: "v1.0.1"
         run: |
           gh release delete latest --yes --repo "${{ github.repository }}" || true
