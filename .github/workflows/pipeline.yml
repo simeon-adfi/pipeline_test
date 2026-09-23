@@ -70,5 +70,6 @@ jobs:
         with:
           tag_name: "v1.0.1"
           files: |
-            release-files/*
+            release-files/hello-1.0-1.x86_64.tar.gz
+            release-files/hello-1.0-1.x86_64.rpm
 
