@@ -70,6 +70,6 @@ jobs:
         with:
           tag_name: "v1.0.1"
           files: |
-            hello-*.tar.gz
-            hello-*.rpm
+            hello-*.zip
+            hello-*.rpm.zip
 
