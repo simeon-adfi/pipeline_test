@@ -70,6 +70,5 @@ jobs:
         with:
           tag_name: "v1.0.1"
           files: |
-            hello-*.zip
-            hello-*.rpm.zip
+            release-files/*
 
