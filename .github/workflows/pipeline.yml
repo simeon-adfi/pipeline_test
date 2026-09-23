@@ -65,11 +65,15 @@ jobs:
         with:
           path: release-files
           merge-multiple: true
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
+      - name: Push rpm & binary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag_name: "v1.0.1"
-          files: |
-            release-files/hello-1.0-1.x86_64.tar.gz
-            release-files/hello-1.0-1.x86_64.rpm
+        run: |
+          gh release delete latest --yes --repo "${{ github.repository }}" || true
+          gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/latest" || true
+          gh release create latest release-files/*.tar.gz release-files/*.rpm \
+            --repo "${{ github.repository }}" \
+            --title "Latest Build" \
+            --notes "Rolling release automatically updated on push to main (${{ github.sha }})."
 
