@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build_tar:
-    name: Create Executable
+    name: Create Tarball
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -67,7 +67,7 @@ jobs:
           merge-multiple: true
       - name: Push rpm & binary
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           tag_name: "v1.0.1"
         run: |
           gh release delete latest --yes --repo "${{ github.repository }}" || true
