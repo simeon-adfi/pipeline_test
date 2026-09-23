@@ -2,9 +2,9 @@ name: Create RPM
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "swissgrid" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "swissgrid" ]
 
 permissions:
   contents: write
@@ -63,13 +63,11 @@ jobs:
         with:
           path: release-files
           merge-multiple: true
-      - name: Push rpm & binary
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete latest --yes --repo "${{ github.repository }}" || true
-          gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/latest" || true
-          gh release create latest release-files/*.tar.gz release-files/*.rpm \
-            --repo "${{ github.repository }}" \
-            --title "Latest Build" \
-            --notes "Rolling release automatically updated on push to main (${{ github.sha }})."
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            hello-${{ github.ref_name }}.tar.gz/*.tar.gz
+            hello-${{ github.ref_name }}-1.${{ env.DIST }}.${{ env.ARCH }}.rpm/**/*.rpm
+            hello-${{ github.ref_name }}-1.${{ env.DIST }}.${{ env.ARCH }}.deb/**/*.deb
+
