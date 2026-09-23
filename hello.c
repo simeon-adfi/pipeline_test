@@ -1,5 +1,4 @@
 #include <stdio.h>
-#TEST
 int main(void) {
     printf("Hello, World!\n");
     return 0;
