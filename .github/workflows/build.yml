@@ -35,8 +35,7 @@ jobs:
         run: |
           echo "$GPG" | gpg --batch --import
           KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10)
-          mkdir -p ~/.config/rpm
-          cat << EOF > ~/.config/rpm/macros
+          cat << EOF > .rpmmacros
           %_gpg_name Package Manager <simeon.meier@adfinis.com>
           %_signature gpg
           %_gpg_path ~/.gnupg
