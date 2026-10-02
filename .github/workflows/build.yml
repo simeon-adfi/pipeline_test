@@ -46,7 +46,7 @@ jobs:
           
           cp ~/.config/rpm/macros ~/.rpmmacros
 
-          rpmsign --addsign *.rpm
+          rpmsign --addsign /home/runner/work/pipeline_test/pipeline_test/RPMS/x86_64/hello-1.0-1.x86_64.rpm
 
       - name: Verify Signed RPM Metadata
         run: |
