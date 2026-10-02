@@ -46,11 +46,11 @@ jobs:
           
           cp ~/.config/rpm/macros ~/.rpmmacros
 
-          rpmsign --addsign /home/runner/work/pipeline_test/pipeline_test/RPMS/x86_64/hello-1.0-1.x86_64.rpm
+          rpmsign --addsign RPMS/x86_64/hello-1.0-1.x86_64.rpm
 
       - name: Verify Signed RPM Metadata
         run: |
-          rpm -Kv *.rpm
+          rpm -Kv RPMS/x86_64/hello-1.0-1.x86_64.rpm
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v4
