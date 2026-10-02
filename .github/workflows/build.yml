@@ -35,13 +35,15 @@ jobs:
         run: |
           echo "$GPG" | gpg --batch --import
           KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10)
-          cat << EOF > .rpmmacros
-          %_gpg_name Package Manager <simeon.meier@adfinis.com>
+          mkdir -p ~/.config/rpm
+          cat << EOF > ~/.config/rpm/macros
           %_signature gpg
           %_gpg_path ~/.gnupg
           %_gpgbin /usr/bin/gpg
+          %_gpg_name $KEY_FINGERPRINT
           %_openpgp_sign_id $KEY_FINGERPRINT
           EOF
+
           rpmsign --addsign *.rpm
 
       - name: Verify Signed RPM Metadata
