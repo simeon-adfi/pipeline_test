@@ -17,7 +17,7 @@ jobs:
       - name: Install RPM build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential rpm elfutils file
+          sudo apt-get install -y build-essential rpm elfutils file rpmsign gnupg
 
       - name: Prep environment
         run: |
@@ -28,6 +28,25 @@ jobs:
 
       - name: Build RPM
         run: rpmbuild -ba --clean --define "_topdir ${PWD}" SPECS/hello.spec
+
+      - name: Sign RPM
+        env:
+          GPG: ${{ secrets.GPG }}
+        run: |
+          echo "$GPG" | gpg --batch --import
+          KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10)
+          mkdir -p ~/.config/rpm
+          cat << EOF > ~/.config/rpm/macros
+          %_signature gpg
+          %_gpg_path ~/.gnupg
+          %_gpgbin /usr/bin/gpg
+          %_openpgp_sign_id $KEY_FINGERPRINT
+          EOF
+          rpmsign --addsign *.rpm
+
+      - name: Verify Signed RPM Metadata
+        run: |
+          rpm -Kv *.rpm
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v4
