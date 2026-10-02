@@ -43,6 +43,8 @@ jobs:
           %_gpg_name $KEY_FINGERPRINT
           %_openpgp_sign_id $KEY_FINGERPRINT
           EOF
+          
+          cp ~/.config/rpm/macros ~/.rpmmacros
 
           rpmsign --addsign *.rpm
 
