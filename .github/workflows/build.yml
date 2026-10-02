@@ -37,6 +37,7 @@ jobs:
           KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10)
           mkdir -p ~/.config/rpm
           cat << EOF > ~/.config/rpm/macros
+          %_gpg_name Package Manager <simeon.meier@adfinis.com>
           %_signature gpg
           %_gpg_path ~/.gnupg
           %_gpgbin /usr/bin/gpg
