@@ -29,7 +29,6 @@ jobs:
         run: |
           sudo dnf builddep SPECS/$package_name.spec
           rpmbuild -bb --clean --define "_topdir ${PWD}" --define "debug_package %{nil}" SPECS/$package_name.spec
-          ls RPMS/x86_64/$package_name-$version-1.el9.x86_64.rpm
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v7
