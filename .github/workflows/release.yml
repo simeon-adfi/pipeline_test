@@ -8,6 +8,10 @@ on:
     types:
       - completed
 
+env:
+  GITHUB_TOKEN: ${{ secrets.TOKEN }}
+  tag_name: "v1.0.1"
+
 jobs:
   release:
     name: Push binary & rpm to releases
@@ -18,10 +22,10 @@ jobs:
         with:
           path: release-files
           merge-multiple: true
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Push rpm & binary
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          tag_name: "v1.0.1"
         run: |
           gh release delete latest --yes --repo "${{ github.repository }}" || true
           gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/latest" || true
