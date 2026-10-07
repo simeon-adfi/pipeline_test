@@ -39,7 +39,7 @@ jobs:
 
           KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10)
           
-          gpg --armor --export "$KEY_FINGERPRINT" > RPM-GPG-KEY-test
+          sudo gpg --armor --export "$KEY_FINGERPRINT" > RPM-GPG-KEY-test
           rpm --import RPM-GPG-KEY-test
 
           touch /tmp/gpg_passphrase
