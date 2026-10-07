@@ -29,6 +29,7 @@ jobs:
         run: |
           sudo dnf builddep SPECS/$package_name.spec
           rpmbuild -bb --define "_topdir ${PWD}" --define "%_enable_debug_packages 0" SPECS/$package_name.spec
+          ls *
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v7
