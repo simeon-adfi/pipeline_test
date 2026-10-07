@@ -10,7 +10,6 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
-  tag_name: "v1.0.1"
 
 jobs:
   release:
