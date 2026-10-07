@@ -26,7 +26,7 @@ jobs:
       - name: Push rpm & binary
         run: | 
           ls release-files/RPMS/x86_64/
-          gh release delete Latest --yes --repo "${{ github.repository }}" || true
+          gh release delete latest --yes --repo "${{ github.repository }}" || true
           gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/latest" || true
           gh release create latest release-files/RPMS/x86_64/*.rpm \
             --repo "${{ github.repository }}" \
