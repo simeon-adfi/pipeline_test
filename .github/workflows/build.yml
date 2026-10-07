@@ -4,6 +4,10 @@ on:
   - pull_request
   - push
 
+env:
+  package_name: hello
+  version: 0.1
+
 jobs:
   build:
     name: Build RPM package from source
@@ -16,15 +20,15 @@ jobs:
 
       - name: Prep environment
         run: |
-          mkdir -p hello-1.0 SOURCES SPECS
-          cp Makefile hello.c hello-1.0/
-          tar cvfz SOURCES/hello-1.0.tar.gz hello-1.0
-          cp hello.spec SPECS/
+          mkdir -p $package_name-$version SOURCES SPECS
+          cp Makefile $package_name.c $package_name-$version/
+          tar cvfz SOURCES/$package_name-$version.tar.gz $package_name-$version
+          cp $package_name.spec SPECS/
 
       - name: Build RPM
         run: |
           sudo dnf builddep SPECS/hello.spec
-          rpmbuild -ba --clean --define "_topdir ${PWD}" SPECS/hello.spec
+          rpmbuild -ba --clean --define "_topdir ${PWD}" SPECS/$package_name.spec
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v7
