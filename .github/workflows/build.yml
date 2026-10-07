@@ -35,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: RPMS
-          path: RPMS/x86_64/$package_name-$version.rpm
+          path: RPMS/x86_64/*.rpm
