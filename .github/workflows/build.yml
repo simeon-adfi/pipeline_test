@@ -6,7 +6,7 @@ on:
 
 env:
   package_name: hello
-  version: 0.1
+  version: 1.0
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
 
       - name: Build RPM
         run: |
-          sudo dnf builddep SPECS/hello.spec
+          sudo dnf builddep SPECS/$package_name.spec
           rpmbuild -ba --clean --define "_topdir ${PWD}" SPECS/$package_name.spec
 
       - name: Upload RPM artifact
