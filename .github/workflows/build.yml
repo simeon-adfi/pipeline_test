@@ -66,10 +66,10 @@ jobs:
 
       - name: Verify Signed RPM Metadata
         run: |
-          rpm -Kv RPMS/x86_64/hello-1.0-1.el9.x86_64.rpm
+          rpm -Kv RPMS/x86_64/$package_name-$version-1.el9.x86_64.rpm
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v7
         with:
           name: RPMS
-          path: RPMS/x86_64/hello-1.0-1.el9.x86_64.rpm
+          path: RPMS/x86_64/$package_name-$version-1.el9.x86_64.rpm
