@@ -24,7 +24,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Push rpm & binary
-        run: |
+        run: | 
+          ls release-files/
           gh release delete latest --yes --repo "${{ github.repository }}" || true
           gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/latest" || true
           gh release create latest release-files/RPMS/*/*.rpm \
