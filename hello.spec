@@ -1,6 +1,6 @@
 Name:           hello
 Version:        1.0
-Release:        1
+Release:        1%{?dist}
 Summary:        A simple Hello World C program package
 License:        GNUv3
 Source0:	hello-%{version}.tar.gz

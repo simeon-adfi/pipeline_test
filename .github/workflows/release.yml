@@ -1,42 +1,13 @@
-name: Create RPM
+name: Publish RPM
 
 on:
-  pull_request:
-    branches: [ "main" ]
-
-#permissions:
-#  contents: write
+  workflow_run:
+    workflows:
+      - Create RPM
+    types:
+      - completed
 
 jobs:
-  build:
-    name: Build RPM from source
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install RPM build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential rpm elfutils file
-
-      - name: Prep environment
-        run: |
-          mkdir -p hello-1.0 SOURCES SPECS
-          cp Makefile hello.c hello-1.0/
-          tar cvfz SOURCES/hello-1.0.tar.gz hello-1.0
-          cp hello.spec SPECS/
-
-      - name: Build RPM
-        run: rpmbuild -ba --clean --define "_topdir ${PWD}" SPECS/hello.spec
-
-      - name: Upload RPM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hello-1.0-1.x86_64.rpm
-          path: RPMS/x86_64/hello-1.0-1.x86_64.rpm
-
   release:
    name: Push binary & rpm to releases
    needs:
