@@ -6,7 +6,7 @@ on:
 
 env:
   package_name: hello
-  version: 1.0
+  version: "1.0"
 
 jobs:
   build:
