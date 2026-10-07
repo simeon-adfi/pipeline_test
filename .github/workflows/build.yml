@@ -39,7 +39,7 @@ jobs:
 
           KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10)
           
-          sudo gpg --armor --export "$KEY_FINGERPRINT" > RPM-GPG-KEY-test
+          gpg --armor --export "$KEY_FINGERPRINT" > RPM-GPG-KEY-test
           sudo rpm --import RPM-GPG-KEY-test
 
           touch /tmp/gpg_passphrase
@@ -59,7 +59,7 @@ jobs:
 
           cp ~/.config/rpm/macros ~/.rpmmacros
 
-          sudo rpmsign --addsign RPMS/x86_64/$package_name-$version-1.x86_64.rpm
+          rpmsign --addsign RPMS/x86_64/$package_name-$version-1.x86_64.rpm
 
           rm -f /tmp/gpg_passphrase
 
