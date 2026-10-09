@@ -36,32 +36,24 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           echo "$GPG" | gpg --batch --no-tty --import
-
-          KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10)
-          
+          KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10) 
           gpg --armor --export "$KEY_FINGERPRINT" > RPM-GPG-KEY-test
           sudo rpm --import RPM-GPG-KEY-test
-
           touch /tmp/gpg_passphrase
           if [ -n "$GPG_PASSPHRASE" ]; then
             echo -n "$GPG_PASSPHRASE" > /tmp/gpg_passphrase
           fi
-
           mkdir -p ~/.config/rpm
           cat << EOF > ~/.config/rpm/macros
           %_signature gpg
           %_gpg_path ~/.gnupg
           %_gpgbin /usr/bin/gpg
-          %_gpg_name $KEY_FINGERPRINT
+          #%_gpg_name Simeon Meier <test@foo.com>
           %_openpgp_sign_id $KEY_FINGERPRINT
           %__gpg_sign_cmd %{_gpgbin} --batch --no-tty --pinentry-mode loopback --passphrase-file /tmp/gpg_passphrase --no-verbose --no-armor -s -b -o %{__signature_filename} %{__plaintext_filename}
           EOF
-
           cp ~/.config/rpm/macros ~/.rpmmacros
-
-          ls -d RPMS/*/*
           rpmsign --addsign RPMS/x86_64/$package_name-$version-1.el9.x86_64.rpm
-
           rm -f /tmp/gpg_passphrase
 
       - name: Verify Signed RPM Metadata
