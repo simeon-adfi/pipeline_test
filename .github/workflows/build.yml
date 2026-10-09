@@ -48,7 +48,7 @@ jobs:
           %_signature gpg
           %_gpg_path ~/.gnupg
           %_gpgbin /usr/bin/gpg
-          #%_gpg_name Simeon Meier <test@foo.com>
+          %_gpg_name Simeon Meier <test@foo.com>
           %_openpgp_sign_id $KEY_FINGERPRINT
           %__gpg_sign_cmd %{_gpgbin} --batch --no-tty --pinentry-mode loopback --passphrase-file /tmp/gpg_passphrase --no-verbose --no-armor -s -b -o %{__signature_filename} %{__plaintext_filename}
           EOF
