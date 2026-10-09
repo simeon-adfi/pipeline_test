@@ -44,7 +44,7 @@ jobs:
             echo -n "$GPG_PASSPHRASE" > /tmp/gpg_passphrase
           fi
           mkdir -p ~/.config/rpm
-          cat << EOF > ~/.config/rpm/macros
+          cat << EOF > ~/.rpmmacros
           %_signature gpg
           %_gpg_path ~/.gnupg
           %_gpgbin /usr/bin/gpg
