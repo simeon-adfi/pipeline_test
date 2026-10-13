@@ -1,8 +1,11 @@
-name: Create RPM
+name: Publish RPM
 
 on:
-  pull_request:
-    branches: [ "main" ]
+  workflow_run:
+    workflows:
+      - Create RPM
+    types:
+      - completed
 
 #permissions:
 #  contents: write
