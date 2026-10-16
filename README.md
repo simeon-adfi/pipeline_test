@@ -41,5 +41,3 @@ The upload is performed by the [hammer](https://github.com/beatrubi/hammer) cont
 * Name `SAT_HOST` with the base URI of Foreman/Katello
 * Name `SAT_USER` with the user attached to the [upload role](https://github.com/beatrubi/hammer/blob/master/assets/Bildschirmfoto%202026-10-14%20um%2012.30.44.png)
 * Name `SAT_PASS` with its password
-
-#TEST

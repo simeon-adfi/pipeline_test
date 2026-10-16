@@ -1,38 +1,68 @@
-name: Release RPM to GitHub
+name: Release packages
 
 on:
   workflow_run:
     workflows:
-      - Create RPM
+      - Build Packages
     types:
       - completed
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
-  release:
-    name: Push binary & rpm to releases
+  publish:
+    name: Sign and upload RPMs
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
+    container: ghcr.io/beatrubi/hammer/hammer:latest
 
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v8
         with:
-          path: release-files
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          merge-multiple: true
           
-      - name: Push rpm & binary
+      - name: Sign RPM
+        env:
+          GPG: ${{ secrets.GPG }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          ls release-files/RPMS/*
-          ls release-files/RPMS/*/*
-          gh release delete latest --yes --repo "${{ github.repository }}" || true
-          gh api -X DELETE "repos/${{ github.repository }}/git/refs/tags/latest" || true
-          gh release create latest release-files/RPMS/*/*.rpm \
-            --repo "${{ github.repository }}" \
-            --title "Latest" \
-            --notes "Rolling release automatically updated on push to main (${{ github.sha }})."
+          echo "$GPG" | gpg --batch --no-tty --import
+          KEY_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr:' | head -n1 | cut -d: -f10) 
+          gpg --armor --export "$KEY_FINGERPRINT" > RPM-GPG-KEY-test
+          sudo rpm --import RPM-GPG-KEY-test
+          touch /tmp/gpg_passphrase
+          if [ -n "$GPG_PASSPHRASE" ]; then
+            echo -n "$GPG_PASSPHRASE" > /tmp/gpg_passphrase
+          fi
+          cat << EOF > ~/.rpmmacros
+          %_signature gpg
+          %_gpg_path ~/.gnupg
+          %_gpgbin /usr/bin/gpg
+          %_openpgp_sign_id $KEY_FINGERPRINT
+          %_gpg_name Name %{_openpgp_sign_id}
+          %__gpg_sign_cmd %{_gpgbin} --batch --no-tty --pinentry-mode loopback --passphrase-file "/tmp/gpg_passphrase" --no-verbose --no-armor -s -b -o %{__signature_filename} %{__plaintext_filename}
+          EOF
+          rpmsign --addsign RPMS/*/*.rpm SRPMS/*.rpm
+          rm -f /tmp/gpg_passphrase
+
+      - name: Push rpms
+        env:
+          SAT_HOST: ${{ secrets.SAT_HOST }}
+          SAT_USER: ${{ secrets.SAT_USER }}
+          SAT_PASS: ${{ secrets.SAT_PASS }}
+        run: |
+          # EL8
+          hammer -s $SAT_HOST -u $SAT_USER -p $SAT_PASS repository \
+          upload-content --organization Default --product Custom --name el8 --path 'RPMS/*/*.el8*.rpm'
+          hammer -s $SAT_HOST -u $SAT_USER -p $SAT_PASS repository \
+          upload-content --organization Default --product Custom --name el8 --content-type srpm --path 'SRPMS/*.el8*.rpm'
+          # EL9
+          hammer -s $SAT_HOST -u $SAT_USER -p $SAT_PASS repository \
+          upload-content --organization Default --product Custom --name el9 --path 'RPMS/*/*.el9.*.rpm'
+          hammer -s $SAT_HOST -u $SAT_USER -p $SAT_PASS repository \
+          upload-content --organization Default --product Custom --name el9 --content-type srpm --path 'SRPMS/*.el9.*.rpm'
+          # EL10
+          hammer -s $SAT_HOST -u $SAT_USER -p $SAT_PASS repository \
+          upload-content --organization Default --product Custom --name el10 --path 'RPMS/*/*.el10.*.rpm'
+          hammer -s $SAT_HOST -u $SAT_USER -p $SAT_PASS repository \
+          upload-content --organization Default --product Custom --name el10 --content-type srpm --path 'SRPMS/*.el10.*.rpm'
